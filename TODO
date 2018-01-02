@@ -1,0 +1,22 @@
+* Example of async hiredis with libevent https://gist.github.com/dspezia/2273908
+
+* blocking subscriber. https://github.com/redis/hiredis
+
+  reply = redisCommand(context,"SUBSCRIBE foo");
+  freeReplyObject(reply);
+  while(redisGetReply(context,&reply) == REDIS_OK) {
+      // consume message
+          freeReplyObject(reply);
+	  }
+
+* create-graph-01.c
+
+    reply = redisCommand(c, "SCAN 0 COUNT 10");
+    n = reply->element[1]->elements;
+    status = reply->element[1]->element[i]->str;
+    
+    reply = redisCommand(c, "KEYS *");
+    n = reply->elements;
+    status = reply->element[i]->str
+
+*
