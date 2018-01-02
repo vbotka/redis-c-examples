@@ -1,6 +1,8 @@
-/* Task: Read /var/log/dpkg.log and create a graph to visualize how
-   often packages are installed, upgraded and removed.
-   Tested with: gcc 7.2, hiredis 0.13 and redis 4.0.1 */
+/* 
+ * Task: Read /var/log/dpkg.log and create a graph to visualize how
+ * often packages are installed, upgraded and removed.
+ * Tested with: gcc 7.2, hiredis 0.13 and redis 4.0.1
+ */
 
 #include <assert.h>
 #include <stdio.h>
@@ -14,7 +16,7 @@ const char *LOG_FILES[] = { "dpkg.log", };
 
 redisContext *c;
 
-/* This function reads log_file and puts the status into the database */
+// This function reads log_file and puts the status into the database.
 int read_log(const char *log_file, redisContext *c) {
   redisReply *reply;
   FILE *fp;
@@ -40,7 +42,7 @@ int read_log(const char *log_file, redisContext *c) {
   return(0);
 }
 
-/* This function reads the database and writes the status CSV file */
+// This function reads the database and writes the status CSV file.
 int write_csv(char *status, redisContext *c) {
   redisReply *reply;
   FILE *fp;
@@ -53,10 +55,10 @@ int write_csv(char *status, redisContext *c) {
   reply = redisCommand(c, "ZRANGE %s 0 -1 WITHSCORES", status);
   assert(reply != NULL);
   n = reply->elements-1;
-  for(i=0; i<n; i=i+2) {
+  for (i=0; i<n; i=i+2) {
     fprintf(fp, "%s %c %s\n", reply->element[i]->str, \
-	                      CSV_SEPARATOR, \
-	                      reply->element[i+1]->str);
+	    CSV_SEPARATOR, \
+	    reply->element[i+1]->str);
   }
   freeReplyObject(reply);
   fclose(fp);
@@ -89,14 +91,14 @@ int main(int argc, char **argv) {
   freeReplyObject(reply);
 
   n = sizeof(LOG_FILES)/sizeof(LOG_FILES[0]);
-  for(i = 0; i < n; i++) {
+  for (i = 0; i < n; i++) {
     read_log(LOG_FILES[i], c);
   }
 
   reply = redisCommand(c, "SCAN 0 COUNT 10");
   assert(reply != NULL);
   n = reply->element[1]->elements;
-  for(i=0; i<n; i++) {
+  for (i=0; i<n; i++) {
     status = reply->element[1]->element[i]->str;
     write_csv(status, c);
   }

@@ -1,6 +1,8 @@
-/* Task: Read text from a file and list 10 most frequently used words
-   in it.
-   Tested with: gcc 7.2, hiredis 0.13 and redis 4.0.1 */
+/* 
+ * Task: Read text from a file and list 10 most frequently used words
+ * in it.
+ * Tested with: gcc 7.2, hiredis 0.13 and redis 4.0.1
+ */
 
 #include <assert.h>
 #include <stdio.h>
@@ -56,7 +58,7 @@ int main(int argc, char **argv) {
   reply = redisCommand(c, "ZRANGE \"topchart\" -10 -1 WITHSCORES");
   assert(reply != NULL);
   n = reply->elements-1;
-  for(i=0; i<n; i=i+2) {
+  for (i=0; i<n; i=i+2) {
     printf("%s %s\n", reply->element[i+1]->str, reply->element[i]->str);
   }
   freeReplyObject(reply);

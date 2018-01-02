@@ -6,13 +6,13 @@ Create frequency graph from a log
 
 **Task:** Read /var/log/dpkg.log and create a graph to visualize how often packages are installed, upgraded and removed.
 
-**Solution:** The loop (92) calls function *read_log* which reads the log line by line (25) and splits the fields date and time in minutes (27.31) and status (32,34). Third field of the log *status* is status of the dpkg operation(install, upgrade, remove ...). Method *zincrby* (35) increments by 1 the score of *date* in the key *status*. As a result the database contains keys(install, upgrade, remove ...) and associated lists of *dates* sorted by score. Next loop (99) calls the function *write_csv* with all keys.  As a result *status.csv* files are created in the current directory with the *(date;score)* pairs.
+**Solution:** The loop (94) calls function *read_log* which reads the log line by line (27) and splits the fields date and time in minutes (29.33) and status (34,36). Third field of the log *status* is status of the dpkg operation(install, upgrade, remove ...). Method *zincrby* (37) increments by 1 the score of *date* in the key *status*. As a result the database contains keys(install, upgrade, remove ...) and associated lists of *dates* sorted by score. Next loop (101) calls the function *write_csv* with all keys.  As a result *status.csv* files are created in the current directory with the *(date;score)* pairs.
 
 .. `[source] <../../code/create-graph-01.c>`_
 
 .. literalinclude:: code/create-graph-01.c
    :linenos:
-   :emphasize-lines: 35, 53, 72, 83, 87, 96, 105
+   :emphasize-lines: 37, 55, 74, 85, 89, 98, 107
 
 **Result:** The *status.csv* files can be used to create a graph with *gnuplot*.
 
@@ -31,13 +31,13 @@ List 10 most used words in a text
 
 .. literalinclude:: code/create-topchart-text.bash
 
-*zincrby* (47) increments by 1 the score of *word* in the key *topchart* and *zrange* (56) returns top 10 words with scores.
+*zincrby* (49) increments by 1 the score of *word* in the key *topchart* and *zrange* (58) returns top 10 words with scores.
 
 .. `[source] <../../source/code/create-topchart.c>`_
 
 .. literalinclude:: code/create-topchart.c
    :linenos:
-   :emphasize-lines: 23, 34, 38, 47, 56, 64
+   :emphasize-lines: 25, 36, 40, 49, 58, 66
 
 **Result:**
 
