@@ -1,0 +1,2 @@
+# https://github.com/rtfd/sphinx_rtd_theme/issues/415
+# sphinx_rtd_theme==0.2.5b1
