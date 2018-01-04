@@ -10,6 +10,12 @@
 #include <string.h>
 #include <hiredis.h>
 
+#define RCMD(context, ...) {                  \
+  reply = redisCommand(context, __VA_ARGS__); \
+  assert(reply != NULL);                      \
+  freeReplyObject(reply);                     \
+  }
+
 const int SIZEOFLINE = 1023;
 const char* DELIMETERS = " ;,.-!?";
 const char* filename = "redis.txt";
@@ -33,22 +39,15 @@ int main(int argc, char **argv) {
     exit(1);
   }
 	
-  reply = redisCommand(c, "FLUSHDB");
-  assert(reply != NULL);
-  freeReplyObject(reply);
-  
-  reply = redisCommand(c, "SELECT 0");
-  assert(reply != NULL);
-  freeReplyObject(reply);
+  RCMD(c, "FLUSHDB");
+  RCMD(c, "SELECT 0");
 
   fp = fopen(filename, "r");
   while (fgets(line, SIZEOFLINE, fp) != NULL) {
     word = strtok(line, DELIMETERS);
     while (word != NULL) {
       if (strlen(word) > 1) {
-	reply = redisCommand(c, "ZINCRBY \"topchart\" 1 \"%s\"", word);
-	assert(reply != NULL);
-	freeReplyObject(reply);
+	RCMD(c, "ZINCRBY \"topchart\" 1 \"%s\"", word);
       }
       word = strtok (NULL, DELIMETERS);
     }

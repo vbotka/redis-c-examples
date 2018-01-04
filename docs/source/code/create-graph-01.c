@@ -10,6 +10,12 @@
 #include <string.h>
 #include <hiredis.h>
 
+#define RCMD(context, ...) {                  \
+  reply = redisCommand(context, __VA_ARGS__); \
+  assert(reply != NULL);                      \
+  freeReplyObject(reply);                     \
+  }
+
 const char LOG_SEPARATOR = ' ';
 const char CSV_SEPARATOR = ';';
 const char *LOG_FILES[] = { "dpkg.log", };
@@ -34,9 +40,7 @@ int read_log(const char *log_file, redisContext *c) {
     status = ++p;
     while (p[0] != LOG_SEPARATOR) p++;
     *p = '\0';
-    reply = redisCommand(c, "ZINCRBY %s 1 \"%s\"", status, date);
-    assert(reply != NULL);
-    freeReplyObject(reply);
+    RCMD(c, "ZINCRBY %s 1 \"%s\"", status, date);
   }
   fclose(fp);
   return(0);
@@ -82,13 +86,8 @@ int main(int argc, char **argv) {
     exit(1);
   }
 	
-  reply = redisCommand(c, "FLUSHDB");
-  assert(reply != NULL);
-  freeReplyObject(reply);
-  
-  reply = redisCommand(c, "SELECT 0");
-  assert(reply != NULL);
-  freeReplyObject(reply);
+  RCMD(c, "FLUSHDB");
+  RCMD(c, "SELECT 0");
 
   n = sizeof(LOG_FILES)/sizeof(LOG_FILES[0]);
   for (i = 0; i < n; i++) {

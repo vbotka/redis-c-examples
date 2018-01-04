@@ -15,7 +15,7 @@ Create frequency graph from a log
 
 .. literalinclude:: code/create-graph-01.c
     :language: c
-    :emphasize-lines: 37, 55, 74, 85, 89, 98, 107
+    :emphasize-lines: 43, 59, 78, 89, 90, 97, 106
     :linenos:
 
 **Result:** The *status.csv* files can be used to create a graph with *gnuplot*.
@@ -41,7 +41,7 @@ List 10 most used words in a text
 
 .. literalinclude:: code/create-topchart.c
     :language: c
-    :emphasize-lines: 25, 36, 40, 49, 58, 66
+    :emphasize-lines: 31, 42, 43, 50, 57, 65
     :linenos:
 
 **Result:**
