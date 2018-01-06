@@ -6,7 +6,7 @@ Create frequency graph from a log
 
 **Task:** Read /var/log/dpkg.log and create a graph to visualize how often packages are installed, upgraded and removed.
 
-**Solution:** The loop (93) calls function *read_log* which reads the log line by line (33) and splits the fields date and time in minutes (35,39) and status (40,42). Third field of the log *status* is status of the dpkg operation(install, upgrade, remove ...). Command *ZINCRBY* (43) increments by 1 the score of *date* in the key *status*. As a result the database contains keys(install, upgrade, remove ...) and associated lists of *dates* sorted by score. Next loop (100) calls the function *write_csv* with first 10 keys.  As a result *status.csv* files are created in the current directory with the *(date;score)* pairs.
+**Solution:** The loop (91) calls function *read_log* which reads the log line by line (33) and splits the fields date and time in minutes (35,39) and status (40,42). Third field of the log *status* is status of the dpkg operation(install, upgrade, remove ...). Command *ZINCRBY* (43) increments by 1 the score of *date* in the key *status*. As a result the database contains keys(install, upgrade, remove ...) and associated lists of *dates* sorted by score. Next loop (97) calls the function *write_csv* with first 10 keys.  As a result *status.csv* files are created in the current directory with the *(date;score)* pairs.
 
 `[create-graph-01.c] <https://github.com/vbotka/redis-c-examples/blob/master/docs/source/code/create-graph-01.c>`_
 
@@ -15,7 +15,7 @@ Create frequency graph from a log
 
 .. literalinclude:: code/create-graph-01.c
     :language: c
-    :emphasize-lines: 43, 59, 78, 89, 90, 97, 106
+    :emphasize-lines: 43, 59, 76, 87, 88, 95, 102
     :linenos:
 
 **Result:** The *status.csv* files can be used to create a graph with *gnuplot*.
@@ -41,7 +41,7 @@ Command *ZINCRBY* (50) increments by 1 the score of *word* in the key *topchart*
 
 .. literalinclude:: code/create-topchart.c
     :language: c
-    :emphasize-lines: 31, 42, 43, 50, 57, 65
+    :emphasize-lines: 31, 42, 43, 50, 57, 63
     :linenos:
 
 **Result:**

@@ -11,9 +11,9 @@
 #include <hiredis.h>
 
 #define RCMD(context, ...) {                  \
+  freeReplyObject(reply);                     \
   reply = redisCommand(context, __VA_ARGS__); \
   assert(reply != NULL);                      \
-  freeReplyObject(reply);                     \
   }
 
 const char LOG_SEPARATOR = ' ';
@@ -22,9 +22,9 @@ const char *LOG_FILES[] = { "dpkg.log", };
 
 redisContext *c;
 
-// This function reads log_file and puts the status into the database.
+/* This function reads log_file and puts the status into the database.*/
 int read_log(const char *log_file, redisContext *c) {
-  redisReply *reply;
+  redisReply *reply=NULL;
   FILE *fp;
   char line[256];
   char *p, *date, *status;
@@ -46,9 +46,9 @@ int read_log(const char *log_file, redisContext *c) {
   return(0);
 }
 
-// This function reads the database and writes the status CSV file.
+/* This function reads the database and writes the status CSV file. */
 int write_csv(char *status, redisContext *c) {
-  redisReply *reply;
+  redisReply *reply=NULL;
   FILE *fp;
   int i,n;
   char filename[256];
@@ -56,22 +56,20 @@ int write_csv(char *status, redisContext *c) {
   strcpy(filename, status);
   strcat(filename, ".csv");
   fp = fopen(filename, "w");
-  reply = redisCommand(c, "ZRANGE %s 0 -1 WITHSCORES", status);
-  assert(reply != NULL);
+  RCMD(c, "ZRANGE %s 0 -1 WITHSCORES", status);
   n = reply->elements-1;
   for (i=0; i<n; i=i+2) {
     fprintf(fp, "%s %c %s\n", reply->element[i]->str, \
 	    CSV_SEPARATOR, \
 	    reply->element[i+1]->str);
   }
-  freeReplyObject(reply);
   fclose(fp);
   return(0);
 }
 
 
 int main(int argc, char **argv) {
-  redisReply *reply;
+  redisReply *reply=NULL;
   int i, n;
   char *status;
   
@@ -86,22 +84,20 @@ int main(int argc, char **argv) {
     exit(1);
   }
 	
-  RCMD(c, "FLUSHDB");
   RCMD(c, "SELECT 0");
+  RCMD(c, "FLUSHDB");
 
   n = sizeof(LOG_FILES)/sizeof(LOG_FILES[0]);
   for (i = 0; i < n; i++) {
     read_log(LOG_FILES[i], c);
   }
 
-  reply = redisCommand(c, "SCAN 0 COUNT 10");
-  assert(reply != NULL);
+  RCMD(c, "SCAN 0 COUNT 10");
   n = reply->element[1]->elements;
   for (i=0; i<n; i++) {
     status = reply->element[1]->element[i]->str;
     write_csv(status, c);
   }
-  freeReplyObject(reply);
 
   redisFree(c);
   return(0);

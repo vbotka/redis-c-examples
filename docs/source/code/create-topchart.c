@@ -11,9 +11,9 @@
 #include <hiredis.h>
 
 #define RCMD(context, ...) {                  \
+  freeReplyObject(reply);                     \
   reply = redisCommand(context, __VA_ARGS__); \
   assert(reply != NULL);                      \
-  freeReplyObject(reply);                     \
   }
 
 const int SIZEOFLINE = 1023;
@@ -22,7 +22,7 @@ const char* filename = "redis.txt";
 
 int main(int argc, char **argv) {
   redisContext *c;
-  redisReply *reply;
+  redisReply *reply=NULL;
   FILE *fp;
   char line[SIZEOFLINE+1];
   char* word;
@@ -39,8 +39,8 @@ int main(int argc, char **argv) {
     exit(1);
   }
 	
-  RCMD(c, "FLUSHDB");
   RCMD(c, "SELECT 0");
+  RCMD(c, "FLUSHDB");
 
   fp = fopen(filename, "r");
   while (fgets(line, SIZEOFLINE, fp) != NULL) {
@@ -54,13 +54,11 @@ int main(int argc, char **argv) {
   }
   fclose(fp);
 
-  reply = redisCommand(c, "ZRANGE \"topchart\" -10 -1 WITHSCORES");
-  assert(reply != NULL);
+  RCMD(c, "ZRANGE \"topchart\" -10 -1 WITHSCORES");
   n = reply->elements-1;
   for (i=0; i<n; i=i+2) {
     printf("%s %s\n", reply->element[i+1]->str, reply->element[i]->str);
   }
-  freeReplyObject(reply);
   
   redisFree(c);
   return(0);
