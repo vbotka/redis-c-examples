@@ -45,7 +45,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'redis-c-examples'
-copyright = '2017, Vladimir Botka'
+copyright = '2017-2018, Vladimir Botka'
 author = 'Vladimir Botka'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -84,9 +84,9 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     #    import sphinx_rtd_theme
     # html_theme = 'alabaster'
     # html_theme = 'default'
-    html_theme = "sphinx_rtd_theme"
+    html_theme = "guzzle_sphinx_theme"
+    # html_theme = "sphinx_rtd_theme"
     html_theme_path = ['_themes', ]
-    # html_theme = "guzzle_sphinx_theme"
     # html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
     #
     # html_style does not work
@@ -95,8 +95,8 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     # html_static_path = ['_themes', ]
 else:
     # html_theme = 'default'
-    # html_theme = "guzzle_sphinx_theme"
-    html_theme = "sphinx_rtd_theme"
+    html_theme = "guzzle_sphinx_theme"
+    # html_theme = "sphinx_rtd_theme"
     html_theme_path = ['_themes', ]
 
 # Theme options are theme-specific and customize the look and feel of a theme
